@@ -1,0 +1,43 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const recipeForm = document.getElementById('recipe-form');
+    const recipesContainer = document.getElementById('recipes');
+
+    const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+
+    const renderRecipes = () => {
+        recipesContainer.innerHTML = '';
+        recipes.forEach((recipe, index) => {
+            const recipeElement = document.createElement('div');
+            recipeElement.classList.add('recipe');
+            recipeElement.innerHTML = `
+                <h3>${recipe.title}</h3>
+                <p><strong>Ingredients:</strong> ${recipe.ingredients}</p>
+                <p><strong>Instructions:</strong> ${recipe.instructions}</p>
+                <button onclick="deleteRecipe(${index})">Delete</button>
+            `;
+            recipesContainer.appendChild(recipeElement);
+        });
+    };
+
+    recipeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value;
+        const ingredients = document.getElementById('ingredients').value;
+        const instructions = document.getElementById('instructions').value;
+
+        const newRecipe = { title, ingredients, instructions };
+        recipes.push(newRecipe);
+        localStorage.setItem('recipes', JSON.stringify(recipes));
+
+        recipeForm.reset();
+        renderRecipes();
+    });
+
+    window.deleteRecipe = (index) => {
+        recipes.splice(index, 1);
+        localStorage.setItem('recipes', JSON.stringify(recipes));
+        renderRecipes();
+    };
+
+    renderRecipes();
+});
